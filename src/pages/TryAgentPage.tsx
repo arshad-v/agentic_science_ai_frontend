@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Upload, Send, Bot, User, FileText, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Upload, Send, Bot, User, FileText, ArrowRight, ArrowLeft, Paperclip, MoreHorizontal, Copy, ThumbsUp, ThumbsDown } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -26,6 +26,7 @@ const TryAgentPage: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [processSteps, setProcessSteps] = useState<ProcessStep[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -34,6 +35,14 @@ const TryAgentPage: React.FC = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Auto-resize textarea
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [inputMessage]);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -51,14 +60,16 @@ const TryAgentPage: React.FC = () => {
       const welcomeMessage: Message = {
         id: Date.now().toString(),
         type: 'bot',
-        content: `Great! I've received your file "${file.name}". Now, please describe what you'd like me to do with your data. For example, you could ask me to:
+        content: `Hello! I'm **Data_Agent.ai**, your AI data science assistant. I've received your file "${file.name}".
 
-• Clean and analyze the data
-• Create visualizations
-• Build predictive models
-• Generate insights and recommendations
+I can help you with:
+• **Data cleaning and preprocessing**
+• **Exploratory data analysis**
+• **Creating visualizations**
+• **Building predictive models**
+• **Generating insights and recommendations**
 
-What's your goal?`,
+What would you like me to do with your data?`,
         timestamp: new Date()
       };
       setMessages([welcomeMessage]);
@@ -92,7 +103,7 @@ What's your goal?`,
     const processingMessage: Message = {
       id: (Date.now() + 1).toString(),
       type: 'bot',
-      content: 'I understand! Let me process your request. I\'ll work through this step by step...',
+      content: 'I understand! Let me process your request step by step...',
       timestamp: new Date()
     };
     setMessages(prev => [...prev, processingMessage]);
@@ -107,15 +118,6 @@ What's your goal?`,
           if (index === i + 1) return { ...step, status: 'running' };
           return step;
         }));
-
-        // Add step completion message
-        const stepMessage: Message = {
-          id: (Date.now() + i + 2).toString(),
-          type: 'system',
-          content: `✅ ${steps[i].name} - Complete`,
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, stepMessage]);
       }
 
       // Send actual request to backend
@@ -140,7 +142,7 @@ What's your goal?`,
 
 ${result.workflow_summary || 'Analysis completed successfully!'}
 
-You can view the detailed results, visualizations, and download any models that were created. Would you like me to explain any specific part of the results?`,
+I've generated detailed results including visualizations and insights. Click below to view the complete analysis.`,
           timestamp: new Date()
         };
         setMessages(prev => [...prev, successMessage]);
@@ -175,6 +177,7 @@ You can view the detailed results, visualizations, and download any models that 
       ));
     } finally {
       setIsProcessing(false);
+      setProcessSteps([]);
     }
   };
 
@@ -185,31 +188,52 @@ You can view the detailed results, visualizations, and download any models that 
     }
   };
 
+  const copyMessage = (content: string) => {
+    navigator.clipboard.writeText(content);
+  };
+
+  const formatMessage = (content: string) => {
+    // Simple markdown-like formatting
+    return content
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/•/g, '•')
+      .split('\n')
+      .map((line, index) => (
+        <div key={index} dangerouslySetInnerHTML={{ __html: line || '<br>' }} />
+      ));
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 py-12">
-      <div className="container mx-auto px-4">
-        <AnimatePresence mode="wait">
-          {currentStep === 'upload' && (
-            <motion.div
-              key="upload"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="max-w-2xl mx-auto"
-            >
+    <div className="min-h-screen bg-white">
+      <AnimatePresence mode="wait">
+        {currentStep === 'upload' && (
+          <motion.div
+            key="upload"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="min-h-screen flex items-center justify-center py-12"
+          >
+            <div className="max-w-2xl mx-auto px-4">
               <div className="text-center mb-8">
-                <h1 className="text-4xl font-bold text-white mb-4">
-                  Try Our AI Data Science Team
-                </h1>
-                <p className="text-gray-400 text-lg">
-                  Upload your CSV file to get started with AI-powered data analysis
+                <div className="flex items-center justify-center space-x-3 mb-4">
+                  <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+                    <Bot className="w-7 h-7 text-white" />
+                  </div>
+                  <h1 className="text-4xl font-bold text-gray-900">
+                    Data_Agent.ai
+                  </h1>
+                </div>
+                <p className="text-gray-600 text-lg">
+                  Upload your CSV file to start analyzing your data with AI
                 </p>
               </div>
 
-              <div className="bg-gray-900 border border-gray-800 rounded-xl p-8">
+              <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Upload CSV File
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Choose your CSV file
                   </label>
                   <div className="relative">
                     <input
@@ -221,12 +245,15 @@ You can view the detailed results, visualizations, and download any models that 
                     />
                     <label
                       htmlFor="file-upload"
-                      className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-700 rounded-lg cursor-pointer hover:border-neon-green transition-colors"
+                      className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-green-400 hover:bg-green-50 transition-all duration-200"
                     >
                       <div className="text-center">
-                        <Upload className="w-8 h-8 text-gray-500 mx-auto mb-2" />
-                        <p className="text-gray-500">
+                        <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                        <p className="text-gray-600">
                           {file ? file.name : 'Click to upload CSV file'}
+                        </p>
+                        <p className="text-gray-400 text-sm mt-1">
+                          Supports CSV files up to 100MB
                         </p>
                       </div>
                     </label>
@@ -237,14 +264,14 @@ You can view the detailed results, visualizations, and download any models that 
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mb-6 p-4 bg-gray-800 rounded-lg"
+                    className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl"
                   >
                     <div className="flex items-center space-x-3">
-                      <FileText className="w-5 h-5 text-neon-green" />
+                      <FileText className="w-5 h-5 text-green-600" />
                       <div>
-                        <p className="text-white font-medium">{file.name}</p>
-                        <p className="text-gray-400 text-sm">
-                          {(file.size / 1024).toFixed(1)} KB
+                        <p className="text-gray-900 font-medium">{file.name}</p>
+                        <p className="text-gray-600 text-sm">
+                          {(file.size / 1024).toFixed(1)} KB • Ready to analyze
                         </p>
                       </div>
                     </div>
@@ -254,142 +281,248 @@ You can view the detailed results, visualizations, and download any models that 
                 <button
                   onClick={handleNext}
                   disabled={!file}
-                  className="w-full flex items-center justify-center space-x-2 bg-neon-green text-black py-3 px-6 rounded-lg font-semibold hover:bg-green-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full flex items-center justify-center space-x-2 bg-green-500 text-white py-3 px-6 rounded-xl font-medium hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-green-500"
                 >
-                  <span>Next</span>
+                  <span>Continue</span>
                   <ArrowRight className="w-5 h-5" />
                 </button>
               </div>
-            </motion.div>
-          )}
+            </div>
+          </motion.div>
+        )}
 
-          {currentStep === 'chat' && (
-            <motion.div
-              key="chat"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="max-w-4xl mx-auto"
-            >
-              <div className="flex items-center justify-between mb-6">
-                <h1 className="text-3xl font-bold text-white">
-                  AI Data Science Assistant
-                </h1>
-                <button
-                  onClick={() => setCurrentStep('upload')}
-                  className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors"
-                >
-                  <ArrowLeft className="w-5 h-5" />
-                  <span>Back</span>
-                </button>
+        {currentStep === 'chat' && (
+          <motion.div
+            key="chat"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="h-screen flex flex-col"
+          >
+            {/* Header */}
+            <div className="bg-white border-b border-gray-200 px-4 py-3">
+              <div className="max-w-4xl mx-auto flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <button
+                    onClick={() => setCurrentStep('upload')}
+                    className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <ArrowLeft className="w-5 h-5" />
+                  </button>
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                      <Bot className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <h1 className="text-lg font-semibold text-gray-900">Data_Agent.ai</h1>
+                      <p className="text-sm text-gray-500">AI Data Science Assistant</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <button className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                    <MoreHorizontal className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
+            </div>
 
-              <div className="bg-gray-900 border border-gray-800 rounded-xl h-[600px] flex flex-col">
-                {/* Chat Messages */}
-                <div className="flex-1 overflow-y-auto p-6 space-y-4">
-                  {messages.map((message) => (
-                    <motion.div
-                      key={message.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
-                    >
-                      <div className={`flex items-start space-x-3 max-w-[80%] ${
-                        message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''
-                      }`}>
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+            {/* Chat Messages */}
+            <div className="flex-1 overflow-y-auto bg-gray-50">
+              <div className="max-w-4xl mx-auto">
+                {messages.map((message, index) => (
+                  <motion.div
+                    key={message.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className={`group ${
+                      message.type === 'user' ? 'bg-white' : 'bg-gray-50'
+                    } border-b border-gray-100 hover:bg-gray-50/50 transition-colors`}
+                  >
+                    <div className="px-4 py-6">
+                      <div className="flex items-start space-x-4">
+                        {/* Avatar */}
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                           message.type === 'user' 
-                            ? 'bg-neon-green text-black' 
+                            ? 'bg-gray-800 text-white' 
                             : message.type === 'system'
-                            ? 'bg-gray-700'
-                            : 'bg-blue-600'
+                            ? 'bg-blue-500 text-white'
+                            : 'bg-green-500 text-white'
                         }`}>
                           {message.type === 'user' ? (
                             <User className="w-4 h-4" />
                           ) : message.type === 'system' ? (
-                            <div className="w-2 h-2 bg-neon-green rounded-full" />
+                            <div className="w-2 h-2 bg-white rounded-full" />
                           ) : (
                             <Bot className="w-4 h-4" />
                           )}
                         </div>
-                        <div className={`rounded-lg p-3 ${
-                          message.type === 'user'
-                            ? 'bg-neon-green text-black'
-                            : message.type === 'system'
-                            ? 'bg-gray-800 text-gray-300'
-                            : 'bg-gray-800 text-white'
-                        }`}>
-                          <p className="whitespace-pre-wrap">{message.content}</p>
-                          <p className={`text-xs mt-1 ${
-                            message.type === 'user' ? 'text-gray-700' : 'text-gray-500'
-                          }`}>
-                            {message.timestamp.toLocaleTimeString()}
-                          </p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
 
-                  {/* Process Steps */}
-                  {processSteps.length > 0 && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="bg-gray-800 rounded-lg p-4"
-                    >
-                      <h4 className="text-white font-medium mb-3">Processing Steps:</h4>
-                      <div className="space-y-2">
-                        {processSteps.map((step) => (
-                          <div key={step.id} className="flex items-center space-x-3">
-                            <div className={`w-3 h-3 rounded-full ${
-                              step.status === 'completed' ? 'bg-green-500' :
-                              step.status === 'running' ? 'bg-yellow-500 animate-pulse' :
-                              step.status === 'error' ? 'bg-red-500' :
-                              'bg-gray-600'
-                            }`} />
-                            <span className={`text-sm ${
-                              step.status === 'completed' ? 'text-green-400' :
-                              step.status === 'running' ? 'text-yellow-400' :
-                              step.status === 'error' ? 'text-red-400' :
-                              'text-gray-500'
-                            }`}>
-                              {step.name}
+                        {/* Message Content */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center space-x-2 mb-1">
+                            <span className="font-semibold text-gray-900">
+                              {message.type === 'user' ? 'You' : message.type === 'system' ? 'System' : 'Data_Agent.ai'}
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              {message.timestamp.toLocaleTimeString()}
                             </span>
                           </div>
-                        ))}
+                          <div className="text-gray-800 leading-relaxed">
+                            {message.type === 'system' ? (
+                              <span className="text-sm text-gray-600">{message.content}</span>
+                            ) : (
+                              <div className="prose prose-sm max-w-none">
+                                {formatMessage(message.content)}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Message Actions */}
+                          {message.type === 'bot' && (
+                            <div className="flex items-center space-x-2 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <button
+                                onClick={() => copyMessage(message.content)}
+                                className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded transition-colors"
+                                title="Copy message"
+                              >
+                                <Copy className="w-4 h-4" />
+                              </button>
+                              <button
+                                className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded transition-colors"
+                                title="Good response"
+                              >
+                                <ThumbsUp className="w-4 h-4" />
+                              </button>
+                              <button
+                                className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded transition-colors"
+                                title="Bad response"
+                              >
+                                <ThumbsDown className="w-4 h-4" />
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </motion.div>
-                  )}
+                    </div>
+                  </motion.div>
+                ))}
 
-                  <div ref={messagesEndRef} />
-                </div>
+                {/* Process Steps */}
+                {processSteps.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-gray-50 border-b border-gray-100"
+                  >
+                    <div className="px-4 py-6">
+                      <div className="flex items-start space-x-4">
+                        <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                          <Bot className="w-4 h-4 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2 mb-3">
+                            <span className="font-semibold text-gray-900">Data_Agent.ai</span>
+                            <span className="text-xs text-gray-500">Processing...</span>
+                          </div>
+                          <div className="bg-white border border-gray-200 rounded-xl p-4">
+                            <div className="space-y-3">
+                              {processSteps.map((step) => (
+                                <div key={step.id} className="flex items-center space-x-3">
+                                  <div className={`w-2 h-2 rounded-full ${
+                                    step.status === 'completed' ? 'bg-green-500' :
+                                    step.status === 'running' ? 'bg-blue-500 animate-pulse' :
+                                    step.status === 'error' ? 'bg-red-500' :
+                                    'bg-gray-300'
+                                  }`} />
+                                  <span className={`text-sm ${
+                                    step.status === 'completed' ? 'text-green-700' :
+                                    step.status === 'running' ? 'text-blue-700' :
+                                    step.status === 'error' ? 'text-red-700' :
+                                    'text-gray-500'
+                                  }`}>
+                                    {step.name}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
 
-                {/* Input Area */}
-                <div className="border-t border-gray-800 p-4">
-                  <div className="flex space-x-3">
-                    <input
-                      type="text"
+                {/* Typing Indicator */}
+                {isProcessing && processSteps.length === 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-gray-50 border-b border-gray-100"
+                  >
+                    <div className="px-4 py-6">
+                      <div className="flex items-start space-x-4">
+                        <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                          <Bot className="w-4 h-4 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <span className="font-semibold text-gray-900">Data_Agent.ai</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <div className="flex space-x-1">
+                              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                            </div>
+                            <span className="text-sm text-gray-500 ml-2">Thinking...</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                <div ref={messagesEndRef} />
+              </div>
+            </div>
+
+            {/* Input Area */}
+            <div className="bg-white border-t border-gray-200">
+              <div className="max-w-4xl mx-auto px-4 py-4">
+                <div className="relative">
+                  <div className="flex items-end space-x-3 bg-white border border-gray-300 rounded-2xl p-3 shadow-sm focus-within:border-green-500 focus-within:ring-1 focus-within:ring-green-500">
+                    <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                      <Paperclip className="w-5 h-5" />
+                    </button>
+                    <textarea
+                      ref={textareaRef}
                       value={inputMessage}
                       onChange={(e) => setInputMessage(e.target.value)}
                       onKeyPress={handleKeyPress}
-                      placeholder="Describe what you'd like me to do with your data..."
-                      className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-neon-green"
+                      placeholder="Message Data_Agent.ai..."
+                      className="flex-1 resize-none border-0 outline-none bg-transparent text-gray-900 placeholder-gray-500 max-h-32 min-h-[24px]"
                       disabled={isProcessing}
+                      rows={1}
                     />
                     <button
                       onClick={handleSendMessage}
                       disabled={!inputMessage.trim() || isProcessing}
-                      className="bg-neon-green text-black px-4 py-2 rounded-lg hover:bg-green-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-green-500"
                     >
-                      <Send className="w-5 h-5" />
+                      <Send className="w-4 h-4" />
                     </button>
                   </div>
+                  <p className="text-xs text-gray-500 mt-2 text-center">
+                    Data_Agent.ai can make mistakes. Consider checking important information.
+                  </p>
                 </div>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
