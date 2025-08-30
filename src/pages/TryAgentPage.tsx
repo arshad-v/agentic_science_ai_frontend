@@ -206,6 +206,7 @@ I've generated detailed results including visualizations and insights. Click bel
 
   return (
     <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-900">
       <AnimatePresence mode="wait">
         {currentStep === 'upload' && (
           <motion.div
@@ -218,21 +219,21 @@ I've generated detailed results including visualizations and insights. Click bel
             <div className="max-w-2xl mx-auto px-4">
               <div className="text-center mb-8">
                 <div className="flex items-center justify-center space-x-3 mb-4">
-                  <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
-                    <Bot className="w-7 h-7 text-white" />
+                  <div className="w-12 h-12 bg-neon-green rounded-full flex items-center justify-center">
+                    <Bot className="w-7 h-7 text-black" />
                   </div>
-                  <h1 className="text-4xl font-bold text-gray-900">
+                  <h1 className="text-4xl font-bold text-white">
                     Data_Agent.ai
                   </h1>
                 </div>
-                <p className="text-gray-600 text-lg">
+                <p className="text-gray-400 text-lg">
                   Upload your CSV file to start analyzing your data with AI
                 </p>
               </div>
 
-              <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm">
+              <div className="bg-gray-800 border border-gray-700 rounded-2xl p-8 shadow-sm">
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                  <label className="block text-sm font-medium text-gray-300 mb-3">
                     Choose your CSV file
                   </label>
                   <div className="relative">
@@ -245,14 +246,14 @@ I've generated detailed results including visualizations and insights. Click bel
                     />
                     <label
                       htmlFor="file-upload"
-                      className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-green-400 hover:bg-green-50 transition-all duration-200"
+                      className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-600 rounded-xl cursor-pointer hover:border-neon-green hover:bg-neon-green/5 transition-all duration-200"
                     >
                       <div className="text-center">
-                        <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                        <p className="text-gray-600">
+                        <Upload className="w-8 h-8 text-gray-500 mx-auto mb-2" />
+                        <p className="text-gray-300">
                           {file ? file.name : 'Click to upload CSV file'}
                         </p>
-                        <p className="text-gray-400 text-sm mt-1">
+                        <p className="text-gray-500 text-sm mt-1">
                           Supports CSV files up to 100MB
                         </p>
                       </div>
@@ -264,13 +265,13 @@ I've generated detailed results including visualizations and insights. Click bel
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl"
+                    className="mb-6 p-4 bg-neon-green/10 border border-neon-green/30 rounded-xl"
                   >
                     <div className="flex items-center space-x-3">
-                      <FileText className="w-5 h-5 text-green-600" />
+                      <FileText className="w-5 h-5 text-neon-green" />
                       <div>
-                        <p className="text-gray-900 font-medium">{file.name}</p>
-                        <p className="text-gray-600 text-sm">
+                        <p className="text-white font-medium">{file.name}</p>
+                        <p className="text-gray-400 text-sm">
                           {(file.size / 1024).toFixed(1)} KB • Ready to analyze
                         </p>
                       </div>
@@ -281,7 +282,7 @@ I've generated detailed results including visualizations and insights. Click bel
                 <button
                   onClick={handleNext}
                   disabled={!file}
-                  className="w-full flex items-center justify-center space-x-2 bg-green-500 text-white py-3 px-6 rounded-xl font-medium hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-green-500"
+                  className="w-full flex items-center justify-center space-x-2 bg-neon-green text-black py-3 px-6 rounded-xl font-medium hover:bg-green-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-neon-green"
                 >
                   <span>Continue</span>
                   <ArrowRight className="w-5 h-5" />
@@ -300,27 +301,27 @@ I've generated detailed results including visualizations and insights. Click bel
             className="h-screen flex flex-col"
           >
             {/* Header */}
-            <div className="bg-white border-b border-gray-200 px-4 py-3">
+            <div className="bg-gray-800 border-b border-gray-700 px-4 py-3">
               <div className="max-w-4xl mx-auto flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <button
                     onClick={() => setCurrentStep('upload')}
-                    className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                    className="p-2 text-gray-400 hover:text-gray-200 hover:bg-gray-700 rounded-lg transition-colors"
                   >
                     <ArrowLeft className="w-5 h-5" />
                   </button>
                   <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                      <Bot className="w-5 h-5 text-white" />
+                    <div className="w-8 h-8 bg-neon-green rounded-full flex items-center justify-center">
+                      <Bot className="w-5 h-5 text-black" />
                     </div>
                     <div>
-                      <h1 className="text-lg font-semibold text-gray-900">Data_Agent.ai</h1>
-                      <p className="text-sm text-gray-500">AI Data Science Assistant</p>
+                      <h1 className="text-lg font-semibold text-white">Data_Agent.ai</h1>
+                      <p className="text-sm text-gray-400">AI Data Science Assistant</p>
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <button className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                  <button className="p-2 text-gray-400 hover:text-gray-200 hover:bg-gray-700 rounded-lg transition-colors">
                     <MoreHorizontal className="w-5 h-5" />
                   </button>
                 </div>
@@ -328,7 +329,7 @@ I've generated detailed results including visualizations and insights. Click bel
             </div>
 
             {/* Chat Messages */}
-            <div className="flex-1 overflow-y-auto bg-gray-50">
+            <div className="flex-1 overflow-y-auto bg-gray-900">
               <div className="max-w-4xl mx-auto">
                 {messages.map((message, index) => (
                   <motion.div
@@ -338,17 +339,18 @@ I've generated detailed results including visualizations and insights. Click bel
                     transition={{ delay: index * 0.1 }}
                     className={`group ${
                       message.type === 'user' ? 'bg-white' : 'bg-gray-50'
-                    } border-b border-gray-100 hover:bg-gray-50/50 transition-colors`}
+                      message.type === 'user' ? 'bg-gray-800' : 'bg-gray-900'
+                    } border-b border-gray-700 hover:bg-gray-800/50 transition-colors`}
                   >
                     <div className="px-4 py-6">
                       <div className="flex items-start space-x-4">
                         {/* Avatar */}
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                           message.type === 'user' 
-                            ? 'bg-gray-800 text-white' 
+                            ? 'bg-gray-600 text-white' 
                             : message.type === 'system'
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-green-500 text-white'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-neon-green text-black'
                         }`}>
                           {message.type === 'user' ? (
                             <User className="w-4 h-4" />
@@ -362,16 +364,16 @@ I've generated detailed results including visualizations and insights. Click bel
                         {/* Message Content */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center space-x-2 mb-1">
-                            <span className="font-semibold text-gray-900">
+                            <span className="font-semibold text-white">
                               {message.type === 'user' ? 'You' : message.type === 'system' ? 'System' : 'Data_Agent.ai'}
                             </span>
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs text-gray-400">
                               {message.timestamp.toLocaleTimeString()}
                             </span>
                           </div>
-                          <div className="text-gray-800 leading-relaxed">
+                          <div className="text-gray-200 leading-relaxed">
                             {message.type === 'system' ? (
-                              <span className="text-sm text-gray-600">{message.content}</span>
+                              <span className="text-sm text-gray-400">{message.content}</span>
                             ) : (
                               <div className="prose prose-sm max-w-none">
                                 {formatMessage(message.content)}
@@ -384,19 +386,19 @@ I've generated detailed results including visualizations and insights. Click bel
                             <div className="flex items-center space-x-2 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
                               <button
                                 onClick={() => copyMessage(message.content)}
-                                className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded transition-colors"
+                                className="p-1.5 text-gray-500 hover:text-gray-300 hover:bg-gray-700 rounded transition-colors"
                                 title="Copy message"
                               >
                                 <Copy className="w-4 h-4" />
                               </button>
                               <button
-                                className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded transition-colors"
+                                className="p-1.5 text-gray-500 hover:text-gray-300 hover:bg-gray-700 rounded transition-colors"
                                 title="Good response"
                               >
                                 <ThumbsUp className="w-4 h-4" />
                               </button>
                               <button
-                                className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded transition-colors"
+                                className="p-1.5 text-gray-500 hover:text-gray-300 hover:bg-gray-700 rounded transition-colors"
                                 title="Bad response"
                               >
                                 <ThumbsDown className="w-4 h-4" />
@@ -414,33 +416,33 @@ I've generated detailed results including visualizations and insights. Click bel
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-gray-50 border-b border-gray-100"
+                    className="bg-gray-900 border-b border-gray-700"
                   >
                     <div className="px-4 py-6">
                       <div className="flex items-start space-x-4">
-                        <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                          <Bot className="w-4 h-4 text-white" />
+                        <div className="w-8 h-8 bg-neon-green rounded-full flex items-center justify-center flex-shrink-0">
+                          <Bot className="w-4 h-4 text-black" />
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center space-x-2 mb-3">
-                            <span className="font-semibold text-gray-900">Data_Agent.ai</span>
-                            <span className="text-xs text-gray-500">Processing...</span>
+                            <span className="font-semibold text-white">Data_Agent.ai</span>
+                            <span className="text-xs text-gray-400">Processing...</span>
                           </div>
-                          <div className="bg-white border border-gray-200 rounded-xl p-4">
+                          <div className="bg-gray-800 border border-gray-600 rounded-xl p-4">
                             <div className="space-y-3">
                               {processSteps.map((step) => (
                                 <div key={step.id} className="flex items-center space-x-3">
                                   <div className={`w-2 h-2 rounded-full ${
-                                    step.status === 'completed' ? 'bg-green-500' :
+                                    step.status === 'completed' ? 'bg-neon-green' :
                                     step.status === 'running' ? 'bg-blue-500 animate-pulse' :
                                     step.status === 'error' ? 'bg-red-500' :
-                                    'bg-gray-300'
+                                    'bg-gray-600'
                                   }`} />
                                   <span className={`text-sm ${
-                                    step.status === 'completed' ? 'text-green-700' :
-                                    step.status === 'running' ? 'text-blue-700' :
-                                    step.status === 'error' ? 'text-red-700' :
-                                    'text-gray-500'
+                                    step.status === 'completed' ? 'text-neon-green' :
+                                    step.status === 'running' ? 'text-blue-400' :
+                                    step.status === 'error' ? 'text-red-400' :
+                                    'text-gray-400'
                                   }`}>
                                     {step.name}
                                   </span>
@@ -459,24 +461,24 @@ I've generated detailed results including visualizations and insights. Click bel
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-gray-50 border-b border-gray-100"
+                    className="bg-gray-900 border-b border-gray-700"
                   >
                     <div className="px-4 py-6">
                       <div className="flex items-start space-x-4">
-                        <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                          <Bot className="w-4 h-4 text-white" />
+                        <div className="w-8 h-8 bg-neon-green rounded-full flex items-center justify-center">
+                          <Bot className="w-4 h-4 text-black" />
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center space-x-2 mb-2">
-                            <span className="font-semibold text-gray-900">Data_Agent.ai</span>
+                            <span className="font-semibold text-white">Data_Agent.ai</span>
                           </div>
                           <div className="flex items-center space-x-1">
                             <div className="flex space-x-1">
-                              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                              <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                              <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                              <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                             </div>
-                            <span className="text-sm text-gray-500 ml-2">Thinking...</span>
+                            <span className="text-sm text-gray-400 ml-2">Thinking...</span>
                           </div>
                         </div>
                       </div>
@@ -489,11 +491,11 @@ I've generated detailed results including visualizations and insights. Click bel
             </div>
 
             {/* Input Area */}
-            <div className="bg-white border-t border-gray-200">
+            <div className="bg-gray-800 border-t border-gray-700">
               <div className="max-w-4xl mx-auto px-4 py-4">
                 <div className="relative">
-                  <div className="flex items-end space-x-3 bg-white border border-gray-300 rounded-2xl p-3 shadow-sm focus-within:border-green-500 focus-within:ring-1 focus-within:ring-green-500">
-                    <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
+                  <div className="flex items-end space-x-3 bg-gray-700 border border-gray-600 rounded-2xl p-3 shadow-sm focus-within:border-neon-green focus-within:ring-1 focus-within:ring-neon-green">
+                    <button className="p-2 text-gray-500 hover:text-gray-300 transition-colors">
                       <Paperclip className="w-5 h-5" />
                     </button>
                     <textarea
@@ -502,19 +504,19 @@ I've generated detailed results including visualizations and insights. Click bel
                       onChange={(e) => setInputMessage(e.target.value)}
                       onKeyPress={handleKeyPress}
                       placeholder="Message Data_Agent.ai..."
-                      className="flex-1 resize-none border-0 outline-none bg-transparent text-gray-900 placeholder-gray-500 max-h-32 min-h-[24px]"
+                      className="flex-1 resize-none border-0 outline-none bg-transparent text-white placeholder-gray-400 max-h-32 min-h-[24px]"
                       disabled={isProcessing}
                       rows={1}
                     />
                     <button
                       onClick={handleSendMessage}
                       disabled={!inputMessage.trim() || isProcessing}
-                      className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-green-500"
+                      className="p-2 bg-neon-green text-black rounded-lg hover:bg-green-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-neon-green"
                     >
                       <Send className="w-4 h-4" />
                     </button>
                   </div>
-                  <p className="text-xs text-gray-500 mt-2 text-center">
+                  <p className="text-xs text-gray-400 mt-2 text-center">
                     Data_Agent.ai can make mistakes. Consider checking important information.
                   </p>
                 </div>
